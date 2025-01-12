@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  api:
+    container_name: foodbase_api
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - database
+
+  database:
+    image: mongo:latest
+    container_name: foodbase_db
+    restart: unless-stopped
+    volumes:
+      - ./data:/data/db
+      - ./.config/mongo-entrypoint:/docker-entrypoint-initdb.d
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
