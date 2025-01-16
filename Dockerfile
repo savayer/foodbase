@@ -17,4 +17,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "run", "start:dev" ]
