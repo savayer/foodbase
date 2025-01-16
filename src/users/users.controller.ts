@@ -16,14 +16,15 @@ export class UsersController {
   @Post()
   async createOneUser(
     @Body('name') name: string,
-    @Body('surname') surname: string,
-    @Body('points') points: number,
+    @Body('email') email: string,
+    @Body('password') password: string,
   ) {
     const generatedId = await this.usersService.createOneUser(
       name,
-      surname,
-      points,
+      email,
+      password,
     );
+
     return { id: generatedId };
   }
 
@@ -41,10 +42,11 @@ export class UsersController {
   updateUser(
     @Param('id') userId: string,
     @Body('name') userName: string,
-    @Body('surname') userSurname: string,
-    @Body('points') userPoints: number,
+    @Body('email') userEmail: string,
+    @Body('password') userPassword: string,
   ) {
-    this.usersService.updateUser(userId, userName, userSurname, userPoints);
+    this.usersService.updateUser(userId, userName, userEmail, userPassword);
+
     return null;
   }
 

@@ -8,33 +8,24 @@ import { User } from './user.model';
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  /**
-   * Create One User
-   *
-   * @param name
-   * @param surname
-   * @param points
-   */
-  async createOneUser(name: string, surname: string, points: number) {
+  async createOneUser(name: string, email: string, password: string) {
     const newUser = new this.userModel({
       name,
-      surname: surname,
-      points,
+      email,
+      password,
     });
     const result = await newUser.save();
+
     return result.id as string;
   }
 
-  /**
-   * Get All Users
-   */
   async getAllUsers() {
     const users = await this.userModel.find().exec();
+
     return users.map((user) => ({
       id: user.id,
       name: user.name,
-      surname: user.surname,
-      points: user.points,
+      email: user.email,
     }));
   }
 
@@ -44,26 +35,26 @@ export class UsersService {
    */
   async getOneUser(userId: string) {
     const user = await this.findUser(userId);
+
     return {
       id: user.id,
       name: user.name,
-      surname: user.surname,
-      points: user.points,
+      email: user.email,
     };
   }
 
   async updateUser(
     userId: string,
     name: string,
-    surname: string,
-    points: number,
+    email: string,
+    password: string,
   ) {
     const modUser = await this.findUser(userId);
 
-    //Only modify Values passed
+    // Only modify Values passed
     if (name) modUser.name = name;
-    if (surname) modUser.surname = surname;
-    if (points) modUser.points = points;
+    if (email) modUser.email = email;
+    if (password) modUser.password = password;
 
     modUser.save();
   }
