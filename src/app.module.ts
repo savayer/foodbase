@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { DishesModule } from './dishes/dishes.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     MongooseModule.forRoot(
       `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@database:27017/${process.env.DB_NAME}?authSource=admin`,
     ),
+    DishesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
