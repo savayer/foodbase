@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MSchema, Types } from 'mongoose';
+import { Document, Schema as MSchema } from 'mongoose';
 import { User } from '../users/user.model';
 
 @Schema({ timestamps: true })
