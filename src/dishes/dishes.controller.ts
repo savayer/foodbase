@@ -49,8 +49,6 @@ export class DishesController {
       throw new BadRequestException('Invalid ID');
     }
 
-    console.log(dto);
-
     const updatedDish = await this.dishesService.updateDish(id, dto);
 
     if (!updatedDish) {
