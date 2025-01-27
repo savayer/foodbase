@@ -8,11 +8,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { isValidObjectId } from 'mongoose';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('dishes')
 export class DishesController {
@@ -38,11 +42,14 @@ export class DishesController {
     return dish;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   @Post()
   createDish(@Body() dto: CreateDishDto) {
     return this.dishesService.createDish(dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async updateDish(@Param('id') id: string, @Body() dto: UpdateDishDto) {
     if (!isValidObjectId(id)) {
@@ -58,6 +65,7 @@ export class DishesController {
     return updatedDish;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteDish(@Param('id') id: string) {
     if (!isValidObjectId(id)) {

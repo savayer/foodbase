@@ -6,8 +6,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  getAllUsers() {
-    return this.usersService.getAllUsers();
+  async getAllUsers() {
+    const users = await this.usersService.getAllUsers();
+
+    return users.map((user) => ({
+      name: user.name,
+      email: user.email,
+    }));
   }
 
   @Get(':email')
