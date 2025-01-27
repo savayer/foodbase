@@ -6,6 +6,7 @@ import {
   IsArray,
   IsNotEmpty,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateDishDto {
   @IsString()
@@ -36,4 +37,8 @@ export class CreateDishDto {
   @IsString()
   @IsOptional()
   category?: string;
+}
+
+export interface CreateDishWithUser extends CreateDishDto {
+  user: Types.ObjectId;
 }

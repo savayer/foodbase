@@ -17,6 +17,7 @@ import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { isValidObjectId } from 'mongoose';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { UserDecorator } from '../decorators/user.decorator';
 
 @Controller('dishes')
 export class DishesController {
@@ -45,8 +46,11 @@ export class DishesController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @Post()
-  createDish(@Body() dto: CreateDishDto) {
-    return this.dishesService.createDish(dto);
+  createDish(@Body() dto: CreateDishDto, @UserDecorator() user) {
+    return this.dishesService.createDish({
+      ...dto,
+      user: user.id,
+    });
   }
 
   @UseGuards(JwtAuthGuard)

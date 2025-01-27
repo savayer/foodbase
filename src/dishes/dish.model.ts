@@ -13,7 +13,6 @@ export class Dish extends Document {
   @Prop({ required: true })
   imageUrl: string;
 
-  // @todo take user from token
   @Prop({ type: MSchema.Types.ObjectId, ref: User.name, required: true })
   user: User;
 

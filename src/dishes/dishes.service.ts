@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Dish } from './dish.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateDishDto } from './dto/create-dish.dto';
+import { CreateDishDto, CreateDishWithUser } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class DishesService {
     return this.dishModel.findById(id).exec();
   }
 
-  async createDish(dto: CreateDishDto) {
+  async createDish(dto: CreateDishWithUser) {
     return this.dishModel.create(dto);
   }
 
