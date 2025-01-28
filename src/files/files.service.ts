@@ -14,7 +14,7 @@ export class FilesService {
     return await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.configService.get('AWS_S3_BUCKET_NAME'),
-        Key: `${Date.now()}-${fileName || file.originalname.slice(0, 10)}`,
+        Key: fileName || `${Date.now()}-${file.originalname}`,
         Body: file.buffer,
         ContentType: file.mimetype,
       }) as any,

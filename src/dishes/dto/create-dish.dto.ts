@@ -17,10 +17,6 @@ export class CreateDishDto {
   @IsOptional()
   description?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
-
   @IsBoolean()
   @IsOptional()
   isPublic?: boolean = false;

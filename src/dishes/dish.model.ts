@@ -10,8 +10,8 @@ export class Dish extends Document {
   @Prop()
   description?: string;
 
-  @Prop({ required: true })
-  imageUrl: string;
+  @Prop()
+  imageUrl?: string;
 
   @Prop({ type: MSchema.Types.ObjectId, ref: User.name, required: true })
   user: User;

@@ -8,7 +8,9 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ import { UpdateDishDto } from './dto/update-dish.dto';
 import { isValidObjectId } from 'mongoose';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { UserDecorator } from '../decorators/user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('dishes')
 export class DishesController {
@@ -46,11 +49,19 @@ export class DishesController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe())
   @Post()
-  createDish(@Body() dto: CreateDishDto, @UserDecorator() user) {
-    return this.dishesService.createDish({
-      ...dto,
-      user: user.id,
-    });
+  @UseInterceptors(FileInterceptor('image'))
+  createDish(
+    @Body() dto: CreateDishDto,
+    @UploadedFile() file: Express.Multer.File,
+    @UserDecorator() user,
+  ) {
+    return this.dishesService.createDish(
+      {
+        ...dto,
+        user: user.id,
+      },
+      file,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
