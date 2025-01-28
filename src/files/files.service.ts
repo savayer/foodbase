@@ -1,30 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-const B2 = require('backblaze-b2');
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class FilesService {
-  private readonly b2 = new B2({
-    applicationKeyId: this.configService.get('S3_KEY_ID'),
-    applicationKey: this.configService.get('S3_KEY'),
+  private readonly s3Client = new S3Client({
+    region: this.configService.getOrThrow('AWS_S3_REGION'),
   });
 
   constructor(private readonly configService: ConfigService) {}
 
-  async uploadFile(file: Express.Multer.File) {
-    await this.b2.authorize();
-    const uploadUrlResponse = await this.b2.getUploadUrl({
-      bucketId: this.configService.get('S3_BUCKET_ID'),
-    });
-
-    const data = await this.b2.uploadFile({
-      uploadUrl: uploadUrlResponse.data.uploadUrl,
-      uploadAuthToken: uploadUrlResponse.data.authorizationToken,
-      fileName: file.originalname,
-      data: file.buffer,
-      mime: file.mimetype,
-    });
-
-    return data.data;
+  async uploadFile(file: Express.Multer.File, fileName?: string) {
+    return await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.configService.get('AWS_S3_BUCKET_NAME'),
+        Key: `${Date.now()}-${fileName || file.originalname.slice(0, 10)}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      }) as any,
+    );
   }
 }
