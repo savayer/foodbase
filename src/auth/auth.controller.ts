@@ -11,8 +11,6 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 
-// @todo implement rate limiter
-
 @Controller('auth')
 export class AuthController {
   constructor(
