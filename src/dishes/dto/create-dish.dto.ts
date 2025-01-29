@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { Types } from 'mongoose';
+import { Transform } from 'class-transformer';
 
 export class CreateDishDto {
   @IsString()
@@ -19,10 +20,22 @@ export class CreateDishDto {
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === 1) return true;
+    if (value === 'false' || value === 0) return false;
+
+    return value;
+  })
   isPublic?: boolean = false;
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true' || value === 1) return true;
+    if (value === 'false' || value === 0) return false;
+
+    return value;
+  })
   isFavorite?: boolean = false;
 
   @IsArray()
@@ -36,5 +49,5 @@ export class CreateDishDto {
 }
 
 export interface CreateDishWithUser extends CreateDishDto {
-  user: Types.ObjectId;
+  user_id: Types.ObjectId;
 }

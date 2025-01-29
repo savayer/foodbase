@@ -47,7 +47,12 @@ export class DishesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   createDish(
@@ -58,7 +63,7 @@ export class DishesController {
     return this.dishesService.createDish(
       {
         ...dto,
-        user: user.id,
+        user_id: user.id,
       },
       file,
     );

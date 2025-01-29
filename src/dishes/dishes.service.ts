@@ -6,6 +6,7 @@ import { CreateDishWithUser } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { FilesService } from '../files/files.service';
 import { ConfigService } from '@nestjs/config';
+import slugify from 'slugify';
 
 @Injectable()
 export class DishesService {
@@ -24,7 +25,7 @@ export class DishesService {
   }
 
   async createDish(dto: CreateDishWithUser, file: Express.Multer.File) {
-    const fileName = `${Date.now()}-${dto.name.replace(/\s/g, '-')}`;
+    const fileName = `${Date.now()}-${slugify(dto.name, { lower: true })}`;
     const res = await this.filesService.uploadFile(file, fileName);
 
     if (res.$metadata.httpStatusCode === 200) {
@@ -32,7 +33,7 @@ export class DishesService {
 
       return this.dishModel.create({
         ...dto,
-        imageUrl,
+        image: imageUrl,
       });
     }
 

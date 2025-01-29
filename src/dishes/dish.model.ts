@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MSchema } from 'mongoose';
+import { Document, Schema as MSchema, Types } from 'mongoose';
 import { User } from '../users/user.model';
 
 @Schema({ timestamps: true })
@@ -10,11 +10,11 @@ export class Dish extends Document {
   @Prop()
   description?: string;
 
-  @Prop()
-  imageUrl?: string;
+  @Prop({ required: true })
+  image: string;
 
   @Prop({ type: MSchema.Types.ObjectId, ref: User.name, required: true })
-  user: User;
+  user_id: Types.ObjectId;
 
   @Prop({ default: false })
   isPublic: boolean;
