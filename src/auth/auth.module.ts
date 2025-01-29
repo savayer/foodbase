@@ -6,20 +6,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   controllers: [AuthController],
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 60 * 1000,
-          limit: 3,
-        },
-      ],
-    }),
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -30,13 +20,6 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     PassportModule,
   ],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
-  ],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

@@ -10,6 +10,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
+import { Throttle } from '@nestjs/throttler';
+import { throttle } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +34,12 @@ export class AuthController {
 
   @UsePipes(new ValidationPipe())
   @Post('login')
+  @Throttle({
+    default: {
+      ttl: 60 * 1000,
+      limit: 3,
+    },
+  })
   async login(@Body() dto: LoginDto) {
     return await this.authService.login(dto);
   }
