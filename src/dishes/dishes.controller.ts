@@ -3,9 +3,12 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   NotFoundException,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   UploadedFile,
@@ -57,7 +60,15 @@ export class DishesController {
   @UseInterceptors(FileInterceptor('image'))
   createDish(
     @Body() dto: CreateDishDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @UserDecorator() user,
   ) {
     return this.dishesService.createDish(
