@@ -20,6 +20,20 @@ export class UsersService {
     return newUser.save();
   }
 
+  async updateUser(email: string, dto: RegisterDto) {
+    const user = await this.findByEmail(email);
+
+    if (!user) {
+      return null;
+    }
+
+    user.name = dto.name;
+    user.email = dto.email;
+    user.googleId = dto.googleId;
+
+    return user.save();
+  }
+
   async findByEmail(email: string) {
     return await this.userModel.findOne({ email }).exec();
   }

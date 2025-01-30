@@ -2,7 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -11,7 +14,7 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { Throttle } from '@nestjs/throttler';
-import { throttle } from 'rxjs';
+import { GoogleAuthGuard } from './guards/google.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -42,5 +45,15 @@ export class AuthController {
   })
   async login(@Body() dto: LoginDto) {
     return await this.authService.login(dto);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  googleAuthRedirect(@Req() req) {
+    return this.authService.googleLogin(req);
   }
 }

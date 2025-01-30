@@ -39,4 +39,43 @@ export class AuthService {
       }),
     };
   }
+
+  async googleLogin(req) {
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    const { email, firstName, lastName } = req.user;
+
+    let user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      user = await this.usersService.createUser({
+        name: `${firstName} ${lastName}`,
+        email,
+        password: null,
+        googleId: req.user.id,
+      });
+    } else {
+      user = await this.usersService.updateUser(email, {
+        name: `${firstName} ${lastName}`,
+        email,
+        password: null,
+        googleId: req.user.id,
+      });
+    }
+
+    const payload = {
+      _id: user.id,
+      email: user.email,
+      name: user.name,
+    };
+
+    const jwt = await this.jwtService.signAsync(payload);
+
+    return {
+      access_token: jwt,
+      user,
+    };
+  }
 }
