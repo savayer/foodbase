@@ -3,7 +3,7 @@ import RegisterForm from '@/app/register/RegisterForm';
 
 export default function RegisterPage() {
   return (
-    <div className="m-auto max-w-lg w-full">
+    <div className="m-auto max-w-lg w-full container">
       <h1 className="text-3xl font-black text-center">Sign up</h1>
 
       <div className="mt-6">

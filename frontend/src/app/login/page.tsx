@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   return (
-    <div className="m-auto max-w-lg w-full">
+    <div className="m-auto max-w-lg w-full container">
       <h1 className="text-3xl font-black text-center">Sign in</h1>
 
       <div className="mt-6">

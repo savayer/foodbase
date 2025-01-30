@@ -13,7 +13,12 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    return await this.usersService.createUser(dto);
+    const user = await this.usersService.createUser(dto);
+
+    return {
+      name: user.name,
+      email: user.email,
+    };
   }
 
   async login(dto: LoginDto) {

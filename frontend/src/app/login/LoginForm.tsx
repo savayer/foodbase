@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { toast } from '@/components/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,9 +37,9 @@ export default function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
     startTransition(async () => {
       try {
-        const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
         const res = (await fetchWrapper.post('/auth/login', data)) as {
           access_token: string;
         };
