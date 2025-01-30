@@ -18,15 +18,17 @@ import { Input } from '@/components/ui/input';
 import { ApiError, FetchWrapper } from '@/lib/fetchWrapper';
 import { useSetCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 
 const FormSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string(),
 });
 
 export default function LoginForm() {
   const router = useRouter();
   const setCookie = useSetCookie();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -36,34 +38,36 @@ export default function LoginForm() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    try {
-      const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
-      const res = (await fetchWrapper.post('/auth/login', data)) as {
-        access_token: string;
-      };
+    startTransition(async () => {
+      try {
+        const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
+        const res = (await fetchWrapper.post('/auth/login', data)) as {
+          access_token: string;
+        };
 
-      if (res.access_token) {
-        setCookie('access_token', res.access_token, {
-          maxAge: 60 * 60 * 24 * 30,
-        });
-        router.push('/');
+        if (res.access_token) {
+          setCookie('access_token', res.access_token, {
+            maxAge: 60 * 60 * 24 * 30,
+          });
+          router.push('/');
+        }
+      } catch (error) {
+        console.error(error);
+        if (error instanceof ApiError) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            className: 'bg-red-400 text-white',
+          });
+        } else {
+          toast({
+            title: 'Error',
+            description: 'An unexpected error occurred',
+            className: 'bg-red-400 text-white',
+          });
+        }
       }
-    } catch (error) {
-      console.error(error);
-      if (error instanceof ApiError) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          className: 'bg-red-400 text-white',
-        });
-      } else {
-        toast({
-          title: 'Error',
-          description: 'An unexpected error occurred',
-          className: 'bg-red-400 text-white',
-        });
-      }
-    }
+    });
   }
 
   return (
@@ -101,7 +105,12 @@ export default function LoginForm() {
           )}
         />
 
-        <Button type="submit" className="w-full font-bold" size="lg">
+        <Button
+          type="submit"
+          className="w-full font-bold"
+          disabled={isPending}
+          size="lg"
+        >
           Sign in
         </Button>
       </form>
