@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CircleUserRoundIcon } from 'lucide-react';
+import NavAuthMenu from '@/components/general/NavAuthMenu';
 
 export default function Navbar() {
   const links = [
@@ -14,21 +14,18 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="py-4 container">
+    <nav className="py-4 container flex gap-2">
       <ul className="flex gap-4">
         {links.map((link) => (
           <li key={link.href}>
             <Link href={link.href}>{link.title}</Link>
           </li>
         ))}
-
-        <li className="ml-auto">
-          <Link href={'/login'} className="flex items-center gap-2">
-            <CircleUserRoundIcon className="size-6" />
-            Sign in
-          </Link>
-        </li>
       </ul>
+
+      <div className="ml-auto">
+        <NavAuthMenu />
+      </div>
     </nav>
   );
 }
