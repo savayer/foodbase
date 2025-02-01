@@ -20,6 +20,17 @@ export class UsersService {
     return newUser.save();
   }
 
+  async createOAuthUser(dto: RegisterDto) {
+    const newUser = new this.userModel({
+      name: dto.name,
+      email: dto.email,
+      googleId: dto.googleId,
+      passwordHash: null,
+    });
+
+    return newUser.save();
+  }
+
   async updateUser(email: string, dto: RegisterDto) {
     const user = await this.findByEmail(email);
 

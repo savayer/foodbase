@@ -2,7 +2,7 @@ import LoginForm from '@/app/login/LoginForm';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getProviders, signIn } from 'next-auth/react';
+import { getProviders } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import AuthProviders from '@/components/AuthProviders';
 
