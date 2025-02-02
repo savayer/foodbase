@@ -2,7 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Req,
+  Res,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -11,6 +15,7 @@ import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { Throttle } from '@nestjs/throttler';
+import { GoogleAuthGuard } from './guards/google.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -43,10 +48,19 @@ export class AuthController {
     return await this.authService.login(dto);
   }
 
-  @Post('google/login')
-  googleLogin(
-    @Body() data: { id: string; name: string; email: string; image: string },
-  ) {
-    return this.authService.googleLogin(data);
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthRedirect(@Req() req: Request, @Res() res) {
+    const data = await this.authService.googleLogin(req);
+
+    if (data.access_token && data.user) {
+      res.redirect(
+        `http://localhost:3001/api/auth/callback?access_token=${data.access_token}&user=${JSON.stringify(data.user)}`,
+      );
+    }
   }
 }

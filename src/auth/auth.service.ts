@@ -45,47 +45,45 @@ export class AuthService {
     };
   }
 
-  async googleLogin(data: {
-    id: string;
-    name: string;
-    email: string;
-    image: string;
-  }) {
-    if (!data) {
-      return 'No data';
+  async googleLogin(req) {
+    if (!req.user) {
+      return {
+        access_token: null,
+        user: null,
+      };
     }
 
-    const { email, name, id } = data;
+    const { email, firstName, lastName } = req.user;
 
     let user = await this.usersService.findByEmail(email);
 
     if (!user) {
       user = await this.usersService.createOAuthUser({
-        name,
+        name: `${firstName} ${lastName}`,
         email,
         password: null,
-        googleId: id,
+        googleId: req.user.id,
       });
     } else {
       user = await this.usersService.updateUser(email, {
-        name,
+        name: `${firstName} ${lastName}`,
         email,
         password: null,
-        googleId: id,
+        googleId: req.user.id,
       });
     }
 
-    const payload = {
+    const userPayload = {
       _id: user.id,
       email: user.email,
       name: user.name,
     };
 
-    const jwt = await this.jwtService.signAsync(payload);
+    const jwt = await this.jwtService.signAsync(userPayload);
 
     return {
       access_token: jwt,
-      user,
+      user: userPayload,
     };
   }
 }

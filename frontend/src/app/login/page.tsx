@@ -1,9 +1,8 @@
 import LoginForm from '@/app/login/LoginForm';
 import Link from 'next/link';
-import GoogleIcon from '@/components/icons/Google';
-import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
+import GoogleAuthButton from '@/components/GoogleAuthButton';
 
 export default async function LoginPage() {
   const cookieStore = await cookies();
@@ -28,12 +27,7 @@ export default async function LoginPage() {
       </div>
 
       <div className="mt-4">
-        <Link href={'/'} className="w-full">
-          <Button variant="outline" className="flex items-center gap-2 w-full">
-            <GoogleIcon className="size-4" />
-            Sign in with Google
-          </Button>
-        </Link>
+        <GoogleAuthButton />
       </div>
 
       <div className="mt-8 text-center">
