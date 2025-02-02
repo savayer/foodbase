@@ -25,7 +25,7 @@ export default function NavAuthMenu() {
       <DropdownMenuContent>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => router.push('/profile')}
+          onClick={() => router.push('/user/profile')}
         >
           Profile
         </DropdownMenuItem>

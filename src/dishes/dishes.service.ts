@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Dish } from './dish.model';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateDishWithUser } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { FilesService } from '../files/files.service';
@@ -16,8 +16,8 @@ export class DishesService {
     private readonly configService: ConfigService,
   ) {}
 
-  async getDishes() {
-    return this.dishModel.find().exec();
+  async getDishes(user_id: Types.ObjectId) {
+    return this.dishModel.find({ user_id }).exec();
   }
 
   async getPublicDishes() {

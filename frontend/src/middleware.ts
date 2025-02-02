@@ -4,7 +4,7 @@ export function middleware(req: NextRequest) {
   const { nextUrl, cookies } = req;
   const accessToken = cookies.get('access_token')?.value;
 
-  const protectedRoutes = ['/profile'];
+  const protectedRoutes = ['/user'];
   const isAuthPage =
     nextUrl.pathname === '/login' || nextUrl.pathname === '/register';
 

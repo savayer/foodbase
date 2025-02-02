@@ -24,6 +24,7 @@ import { isValidObjectId } from 'mongoose';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { UserDecorator } from '../decorators/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { User } from '../users/user.model';
 
 @Controller('dishes')
 export class DishesController {
@@ -31,8 +32,8 @@ export class DishesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getDishes() {
-    return this.dishesService.getDishes();
+  getDishesByUserId(@UserDecorator() user) {
+    return this.dishesService.getDishes(user.id);
   }
 
   @Get('public')
