@@ -27,7 +27,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const isCorrectPassword = await compare(dto.password, user.passwordHash);
+    const isCorrectPassword = await compare(
+      dto.password,
+      user.passwordHash || '',
+    );
     if (!isCorrectPassword) {
       throw new UnauthorizedException('Invalid email or password');
     }
@@ -59,14 +62,14 @@ export class AuthService {
 
     if (!user) {
       user = await this.usersService.createOAuthUser({
-        name: `${firstName} ${lastName}`,
+        name: `${firstName} ${lastName || ''}`,
         email,
         password: null,
         googleId: req.user.id,
       });
     } else {
       user = await this.usersService.updateUser(email, {
-        name: `${firstName} ${lastName}`,
+        name: `${firstName} ${lastName || ''}`,
         email,
         password: null,
         googleId: req.user.id,

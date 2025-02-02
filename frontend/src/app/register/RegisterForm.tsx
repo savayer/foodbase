@@ -16,7 +16,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApiError, FetchWrapper } from '@/lib/fetchWrapper';
+import { ApiError, fetchWrapper } from '@/lib/fetchWrapper';
+import { registerAction } from '@/actions/auth';
 
 const FormSchema = z
   .object({
@@ -53,13 +54,9 @@ export default function RegisterForm() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
     startTransition(async () => {
       try {
-        const res = (await fetchWrapper.post('/auth/register', data)) as {
-          name: string;
-          email: string;
-        };
+        const res = await registerAction(data);
 
         if (res.name === data.name && res.email === data.email) {
           toast({

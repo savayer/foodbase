@@ -1,11 +1,12 @@
 // hooks/useAuth.ts
 import { create } from 'zustand';
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { User } from '@/types';
 
 interface AuthStore {
   token: string | null;
-  user: any | null;
-  setAuth: (token: string, user: any) => void;
+  user: User | null;
+  setAuth: (token: string, user: User) => void;
   logout: () => void;
 }
 

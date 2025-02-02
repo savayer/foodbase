@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import RegisterForm from '@/app/register/RegisterForm';
+import OrSeparator from '@/components/general/OrSeparator';
+import GoogleAuthButton from '@/components/GoogleAuthButton';
 
 export default function RegisterPage() {
   return (
@@ -8,6 +10,12 @@ export default function RegisterPage() {
 
       <div className="mt-6">
         <RegisterForm />
+      </div>
+
+      <OrSeparator />
+
+      <div className="mt-4">
+        <GoogleAuthButton>Sign up with Google</GoogleAuthButton>
       </div>
 
       <div className="mt-8 text-center">

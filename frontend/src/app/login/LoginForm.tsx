@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ApiError } from '@/lib/fetchWrapper';
-import { useSetCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useAuth } from '@/lib/useAuth';
@@ -28,7 +27,6 @@ const FormSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
-  const setCookie = useSetCookie();
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

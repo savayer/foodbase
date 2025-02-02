@@ -2,8 +2,13 @@
 
 import GoogleIcon from '@/components/icons/Google';
 import { Button } from '@/components/ui/button';
+import { ReactNode } from 'react';
 
-export default function GoogleAuthButton() {
+export default function GoogleAuthButton({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <Button
       variant="outline"
@@ -13,7 +18,7 @@ export default function GoogleAuthButton() {
       }
     >
       <GoogleIcon className="size-4" />
-      Sign in with Google
+      {children}
     </Button>
   );
 }

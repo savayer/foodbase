@@ -1,13 +1,35 @@
-import { FetchWrapper } from '@/lib/fetchWrapper';
 import { User } from '@/types';
-
-const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
+import { fetchWrapper } from '@/lib/fetchWrapper';
 
 interface LoginResponse {
   access_token: string;
   user: User;
 }
 
-export const loginAction = async (data): Promise<LoginResponse> => {
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export const loginAction = async (
+  data: LoginPayload,
+): Promise<LoginResponse> => {
   return await fetchWrapper.post('/auth/login', data);
+};
+
+interface RegisterResponse {
+  name: string;
+  email: string;
+}
+
+interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export const registerAction = async (
+  data: RegisterPayload,
+): Promise<RegisterResponse> => {
+  return await fetchWrapper.post('/auth/register', data);
 };

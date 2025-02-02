@@ -1,8 +1,8 @@
-import { FetchWrapper } from '@/lib/fetchWrapper';
+import { fetchWrapper } from '@/lib/fetchWrapper';
+import { getPublicDishes } from '@/actions/dishes';
 
 export default async function Home() {
-  const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
-  const dishes = await fetchWrapper.get('/dishes/public');
+  const dishes = await getPublicDishes();
 
   return (
     <main className="mb-auto">
