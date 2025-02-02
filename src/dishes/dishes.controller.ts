@@ -29,9 +29,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   getDishes() {
     return this.dishesService.getDishes();
+  }
+
+  @Get('public')
+  getPublicDishes() {
+    return this.dishesService.getPublicDishes();
   }
 
   @Get(':id')

@@ -1,32 +1,49 @@
 'use client';
 
-import { signOut, useSession } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
 import { CircleUserRoundIcon } from 'lucide-react';
+import { useAuth } from '@/lib/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-function AuthButton() {
-  const { data: session } = useSession();
-
-  if (session) {
-    return (
-      <>
-        {session?.user?.name} <br />
-        <Button onClick={() => signOut()}>Sign out</Button>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Link href={'/login'} className="flex items-center gap-2">
-        <CircleUserRoundIcon className="size-6" />
-        Sign in
-      </Link>
-    </>
-  );
-}
-
 export default function NavAuthMenu() {
-  return <AuthButton />;
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  return user ? (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex items-center gap-2">
+        <CircleUserRoundIcon className="size-6" />
+        <span>{user?.name || ''}</span>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => router.push('/profile')}
+        >
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => {
+            logout();
+            router.push('/');
+          }}
+        >
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ) : (
+    <Link href={'/login'} className="flex items-center gap-2">
+      <CircleUserRoundIcon className="size-6" />
+      Sign in
+    </Link>
+  );
 }

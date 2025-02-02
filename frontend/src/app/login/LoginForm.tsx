@@ -14,10 +14,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ApiError, FetchWrapper } from '@/lib/fetchWrapper';
+import { ApiError } from '@/lib/fetchWrapper';
 import { useSetCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+import { useAuth } from '@/lib/useAuth';
+import { loginAction } from '@/actions/auth';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -35,19 +37,15 @@ export default function LoginForm() {
       password: '',
     },
   });
+  const { setAuth } = useAuth();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const fetchWrapper = new FetchWrapper(process.env.NEXT_PUBLIC_API_URL);
     startTransition(async () => {
       try {
-        const res = (await fetchWrapper.post('/auth/login', data)) as {
-          access_token: string;
-        };
+        const res = await loginAction(data);
 
         if (res.access_token) {
-          setCookie('access_token', res.access_token, {
-            maxAge: 60 * 60 * 24 * 30,
-          });
+          setAuth(res.access_token, res.user);
           router.push('/');
         }
       } catch (error) {

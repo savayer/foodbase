@@ -20,6 +20,10 @@ export class DishesService {
     return this.dishModel.find().exec();
   }
 
+  async getPublicDishes() {
+    return this.dishModel.find({ isPublic: true }).exec();
+  }
+
   async getDish(id: string) {
     return this.dishModel.findById(id).exec();
   }

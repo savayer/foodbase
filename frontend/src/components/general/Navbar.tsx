@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import NavAuthMenu from '@/components/general/NavAuthMenu';
 
-export default function Navbar() {
+export default async function Navbar() {
   const links = [
     {
       title: 'Home',

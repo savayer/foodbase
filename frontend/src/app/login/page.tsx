@@ -1,19 +1,17 @@
 import LoginForm from '@/app/login/LoginForm';
 import Link from 'next/link';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getProviders } from 'next-auth/react';
+import GoogleIcon from '@/components/icons/Google';
+import { Button } from '@/components/ui/button';
 import { redirect } from 'next/navigation';
-import AuthProviders from '@/components/AuthProviders';
+import { cookies } from 'next/headers';
 
 export default async function LoginPage() {
-  const session = await getServerSession(authOptions);
+  const cookieStore = await cookies();
+  const token = cookieStore.get('access_token');
 
-  if (session) {
+  if (token) {
     redirect('/');
   }
-
-  const providers = await getProviders();
 
   return (
     <div className="m-auto max-w-lg w-full container">
@@ -30,7 +28,12 @@ export default async function LoginPage() {
       </div>
 
       <div className="mt-4">
-        <AuthProviders providers={providers} />
+        <Link href={'/'} className="w-full">
+          <Button variant="outline" className="flex items-center gap-2 w-full">
+            <GoogleIcon className="size-4" />
+            Sign in with Google
+          </Button>
+        </Link>
       </div>
 
       <div className="mt-8 text-center">

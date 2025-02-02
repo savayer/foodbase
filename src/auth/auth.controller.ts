@@ -47,7 +47,6 @@ export class AuthController {
   googleLogin(
     @Body() data: { id: string; name: string; email: string; image: string },
   ) {
-    console.log(data);
     return this.authService.googleLogin(data);
   }
 }
