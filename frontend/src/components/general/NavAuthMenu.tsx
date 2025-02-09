@@ -31,6 +31,12 @@ export default function NavAuthMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
+          onClick={() => router.push('/user/dishes')}
+        >
+          Dishes
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
           onClick={() => {
             logout();
             router.push('/');

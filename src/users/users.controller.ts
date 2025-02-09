@@ -1,11 +1,20 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Types } from 'mongoose';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllUsers() {
     const users = await this.usersService.getAllUsers();
@@ -16,6 +25,21 @@ export class UsersController {
     }));
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async getMe(@Request() req) {
+    if (req.user) {
+      return {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+      };
+    }
+
+    return null;
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUser(@Param('id') identifier: string) {
     const isValidMongoId = Types.ObjectId.isValid(identifier);
@@ -23,11 +47,22 @@ export class UsersController {
     if (isValidMongoId) {
       const userById = await this.usersService.findById(identifier);
 
-      if (userById) return userById;
+      if (userById)
+        return {
+          id: userById._id,
+          name: userById.name,
+          email: userById.email,
+        };
     }
 
     const userByEmail = await this.usersService.findByEmail(identifier);
-    if (userByEmail) return userByEmail;
+
+    if (userByEmail)
+      return {
+        id: userByEmail._id,
+        name: userByEmail.name,
+        email: userByEmail.email,
+      };
 
     throw new NotFoundException('User not found');
   }
