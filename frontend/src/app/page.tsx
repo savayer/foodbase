@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <main className="mb-auto">
-      <section className="container mt-10">
+      <section className="container mt-10 grid grid-cols-4 gap-3">
         {dishes.map((dish) => (
           <div key={dish._id}>
             <img
@@ -17,7 +17,7 @@ export default async function Home() {
               height={320}
             />
 
-            <h3 className="text-2xl font-bold mt-1">{dish.name}</h3>
+            <h3 className="text-2xl font-bold mt-3">{dish.name}</h3>
             <p>{dish.description}</p>
           </div>
         ))}

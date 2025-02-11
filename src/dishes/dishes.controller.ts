@@ -80,7 +80,7 @@ export class DishesController {
     return this.dishesService.createDish(
       {
         ...dto,
-        user_id: user.id,
+        user_id: user._id,
       },
       file,
     );

@@ -37,10 +37,18 @@ export class FetchWrapper {
   }
 
   async post<T>(url: string, data: any): Promise<T> {
+    const isFormData = data instanceof FormData;
+    let headers;
+
+    if (isFormData) {
+      headers = new Headers(this.headers);
+      headers.delete('Content-Type');
+    }
+
     const response = await fetch(`${this.baseUrl}${url}`, {
       method: 'POST',
-      body: JSON.stringify(data),
-      headers: this.headers,
+      body: isFormData ? data : JSON.stringify(data),
+      headers: isFormData ? headers : this.headers,
     });
 
     return this.handleResponse(response);

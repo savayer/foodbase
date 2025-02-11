@@ -1,7 +1,6 @@
-import { FetchWrapper, fetchWrapper } from '@/lib/fetchWrapper';
-import { cookies } from 'next/headers';
-import { getCookie } from 'cookies-next';
-import { useAuth } from '@/lib/useAuth';
+'use server';
+
+import { createFetchWrapper } from '@/lib/createFetchWrapper';
 
 // @todo create swagger and generate types, instead of creating them manually
 export interface Dish {
@@ -20,15 +19,19 @@ export interface Dish {
 }
 
 export const getPublicDishes = async (): Promise<Dish[]> => {
+  const fetchWrapper = await createFetchWrapper(false);
+
   return await fetchWrapper.get('/dishes/public');
 };
 
 export const getDishes = async (): Promise<Dish[]> => {
-  const cookiesStore = await cookies();
-  const fetchWrapper = new FetchWrapper({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    accessToken: cookiesStore.get('access_token')?.value,
-  });
+  const fetchWrapper = await createFetchWrapper(true);
 
   return await fetchWrapper.get('/dishes');
+};
+
+export const createDishAction = async (data): Promise<Dish> => {
+  const fetchWrapper = await createFetchWrapper(true);
+
+  return await fetchWrapper.post('/dishes', data);
 };
