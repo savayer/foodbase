@@ -19,16 +19,18 @@ export default async function DishesPage() {
         <div className="mt-6 grid grid-cols-4 gap-10">
           {userDishes.map((dish) => (
             <div key={dish._id}>
-              <img
-                src={dish.image}
-                className="w-full h-80 object-cover rounded"
-                alt={dish.name}
-                width={320}
-                height={320}
-              />
+              <Link href={`/user/dishes/${dish._id}`}>
+                <img
+                  src={dish.image}
+                  className="w-full h-80 object-cover rounded"
+                  alt={dish.name}
+                  width={320}
+                  height={320}
+                />
 
-              <h3 className="text-2xl font-bold mt-3">{dish.name}</h3>
-              <p>{dish.description}</p>
+                <h3 className="text-2xl font-bold mt-3">{dish.name}</h3>
+                <p>{dish.description}</p>
+              </Link>
             </div>
           ))}
         </div>

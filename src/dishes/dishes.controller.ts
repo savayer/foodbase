@@ -115,6 +115,10 @@ export class DishesController {
       throw new NotFoundException(`Dish with ID ${id} not found`);
     }
 
-    return 'ok';
+    return {
+      success: true,
+      message: 'Dish successfully deleted',
+      deletedId: id,
+    };
   }
 }

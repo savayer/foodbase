@@ -30,6 +30,18 @@ export const getDishes = async (): Promise<Dish[]> => {
   return await fetchWrapper.get('/dishes');
 };
 
+export const getDish = async (id: string): Promise<Dish> => {
+  const fetchWrapper = await createFetchWrapper(true);
+
+  return await fetchWrapper.get(`/dishes/${id}`);
+};
+
+export const deleteDish = async (id: string): Promise<Dish[]> => {
+  const fetchWrapper = await createFetchWrapper(true);
+
+  return await fetchWrapper.delete(`/dishes/${id}`);
+};
+
 export const createDishAction = async (data): Promise<Dish> => {
   const fetchWrapper = await createFetchWrapper(true);
 
