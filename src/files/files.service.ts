@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import slugify from 'slugify';
 
 @Injectable()
 export class FilesService {
@@ -13,6 +14,10 @@ export class FilesService {
   });
 
   constructor(private readonly configService: ConfigService) {}
+
+  processFileName(fileName: string) {
+    return `${Date.now()}-${slugify(fileName, { lower: true })}`;
+  }
 
   async uploadFile(file: Express.Multer.File, fileName?: string) {
     return await this.s3Client.send(

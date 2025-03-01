@@ -13,9 +13,14 @@ import { ImagePlus } from 'lucide-react';
 type Props = {
   preview: string | ArrayBuffer | null;
   onDrop: (acceptedFiles: File[]) => void;
+  existingImage?: string;
 };
 
-export default function ImageUploader({ preview, onDrop }: Props) {
+export default function ImageUploader({
+  preview,
+  onDrop,
+  existingImage,
+}: Props) {
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
     useDropzone({
       onDrop,
@@ -37,12 +42,20 @@ export default function ImageUploader({ preview, onDrop }: Props) {
           {...getRootProps()}
           className="mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-foreground p-8 shadow-sm shadow-foreground"
         >
-          {preview && (
+          {preview ? (
             <img
               src={preview as string}
               alt="Uploaded image"
               className="max-h-52 rounded-lg"
             />
+          ) : (
+            existingImage && (
+              <img
+                src={existingImage as string}
+                alt="Uploaded image"
+                className="max-h-52 rounded-lg"
+              />
+            )
           )}
           <ImagePlus
             className={`size-20 stroke-neutral-500 ${preview ? 'hidden' : 'block'}`}

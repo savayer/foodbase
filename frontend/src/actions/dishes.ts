@@ -49,3 +49,9 @@ export const createDishAction = async (data): Promise<Dish> => {
 
   return await fetchWrapper.post('/dishes', data);
 };
+
+export const updateDishAction = async (id: string, data): Promise<Dish> => {
+  const fetchWrapper = await createFetchWrapper(true);
+
+  return await fetchWrapper.patch(`/dishes/${id}`, data);
+};

@@ -20,7 +20,7 @@ import {
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { HttpCreateDishDto } from './dto/create-dish.dto';
-import { UpdateDishDto } from './dto/update-dish.dto';
+import { HttpUpdateDishDto, UpdateDishDto } from './dto/update-dish.dto';
 import { isValidObjectId } from 'mongoose';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { UserDecorator } from '../decorators/user.decorator';
@@ -101,12 +101,43 @@ export class DishesController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async updateDish(@Param('id') id: string, @Body() dto: UpdateDishDto) {
+  @UseInterceptors(FileInterceptor('image'))
+  async updateDish(
+    @Param('id') id: string,
+    @Body() dto: HttpUpdateDishDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid ID');
     }
 
-    const updatedDish = await this.dishesService.updateDish(id, dto);
+    let ingredients: IngredientDto[] = [];
+    if (dto.ingredients) {
+      try {
+        ingredients = JSON.parse(dto.ingredients);
+      } catch (e) {
+        console.error(e);
+        throw new BadRequestException('Invalid ingredients format');
+      }
+    }
+
+    const updatedDish = await this.dishesService.updateDish(
+      id,
+      {
+        ...dto,
+        ingredients,
+      },
+      file,
+    );
 
     if (!updatedDish) {
       throw new NotFoundException(`Dish with ID ${id} not found`);

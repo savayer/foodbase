@@ -1,5 +1,5 @@
 import React from 'react';
-import DishForm from './DishForm';
+import DishForm from '../DishForm';
 
 export default function Page() {
   return (

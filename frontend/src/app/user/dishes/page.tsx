@@ -29,7 +29,7 @@ export default async function DishesPage() {
                 />
 
                 <h3 className="text-2xl font-bold mt-3">{dish.name}</h3>
-                <p>{dish.description}</p>
+                <p className="truncate">{dish.description}</p>
               </Link>
             </div>
           ))}

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Dish } from './dish.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -29,7 +33,7 @@ export class DishesService {
   }
 
   async createDish(dto: CreateDishDto, file: Express.Multer.File) {
-    const fileName = `${Date.now()}-${slugify(dto.name, { lower: true })}`;
+    const fileName = this.filesService.processFileName(dto.name);
     const res = await this.filesService.uploadFile(file, fileName);
 
     if (res.$metadata.httpStatusCode === 200) {
@@ -44,7 +48,45 @@ export class DishesService {
     throw new BadRequestException('Failed to upload image');
   }
 
-  async updateDish(id: string, dto: UpdateDishDto) {
+  async updateDish(
+    id: string,
+    dto: UpdateDishDto,
+    file: Express.Multer.File | undefined,
+  ) {
+    if (file) {
+      const existingDish = await this.dishModel.findById(id).exec();
+
+      if (!existingDish) {
+        throw new NotFoundException(`Dish with ID ${id} not found`);
+      }
+
+      if (existingDish.image) {
+        try {
+          await this.filesService.deleteImage(
+            this.getFileNameFromUrl(existingDish.image),
+          );
+        } catch (error) {
+          // @todo install logger?
+          console.error(error);
+        }
+      }
+
+      const fileName = this.filesService.processFileName(dto.name);
+      const res = await this.filesService.uploadFile(file, fileName);
+
+      if (res.$metadata.httpStatusCode === 200) {
+        const imageUrl = `https://${this.configService.get('AWS_S3_BUCKET_NAME')}.s3.${this.configService.get('AWS_S3_REGION')}.amazonaws.com/${fileName}`;
+
+        return this.dishModel.findByIdAndUpdate(
+          id,
+          { ...dto, image: imageUrl },
+          {
+            new: true,
+          },
+        );
+      }
+    }
+
     return this.dishModel.findByIdAndUpdate(id, dto, {
       new: true,
     });
@@ -59,5 +101,9 @@ export class DishesService {
     }
 
     return this.dishModel.findByIdAndDelete(id).exec();
+  }
+
+  private getFileNameFromUrl(url: string) {
+    return url.split('/').pop();
   }
 }

@@ -17,11 +17,12 @@ import { Input } from '@/components/ui/input';
 import { ApiError } from '@/lib/fetchWrapper';
 import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
-import { createDishAction } from '@/actions/dishes';
+import { createDishAction, Dish, updateDishAction } from '@/actions/dishes';
 import { Switch } from '@/components/ui/switch';
 import ImageUploader from '@/components/general/ImageUploader';
 import { Card, CardContent } from '@/components/ui/card';
 import { PlusCircle, Trash2 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 const IngredientSchema = z.object({
   name: z.string().min(1, 'Ingredient name is required'),
@@ -32,26 +33,37 @@ const IngredientSchema = z.object({
 const FormSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
   description: z.string().min(5, 'Description is too short'),
-  image: z
-    //Rest of validations done via react dropzone
-    .instanceof(File)
-    .refine((file) => file.size !== 0, 'Please upload an image'),
+  image: z.union([
+    z
+      .instanceof(File)
+      .refine((file) => file.size !== 0, 'Please upload an image'),
+    z.string().url('Invalid image URL'),
+  ]),
   isPublic: z.boolean(),
   ingredients: z.array(IngredientSchema).optional(),
 });
 
-export default function DishForm() {
+type Props = {
+  dish?: Dish;
+};
+
+export default function DishForm({ dish }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [preview, setPreview] = React.useState<string | ArrayBuffer | null>('');
+  const [preview, setPreview] = React.useState<string | ArrayBuffer | null>(
+    dish?.image || '',
+  );
+  const [imageChanged, setImageChanged] = React.useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      image: new File([''], 'filename'),
-      isPublic: true,
-      ingredients: [{ name: '', amount: '', unit: '' }],
+      name: dish?.name || '',
+      description: dish?.description || '',
+      image: dish?.image || new File([''], 'filename'),
+      isPublic: dish?.isPublic || true,
+      ingredients: dish?.ingredients?.length
+        ? dish?.ingredients
+        : [{ name: '', amount: '', unit: '' }],
     },
   });
 
@@ -94,8 +106,17 @@ export default function DishForm() {
       }
 
       try {
-        await createDishAction(formData);
-        toast({ title: 'Success', description: 'Dish created successfully' });
+        if (dish) {
+          if (typeof data.image === 'string') {
+            formData.delete('image');
+          }
+          await updateDishAction(dish._id, formData);
+          toast({ title: 'Success', description: 'Dish updated successfully' });
+        } else {
+          await createDishAction(formData);
+          toast({ title: 'Success', description: 'Dish created successfully' });
+        }
+
         router.push('/user/dishes');
       } catch (error) {
         console.error(error);
@@ -140,7 +161,11 @@ export default function DishForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Short description" {...field} />
+                <Textarea
+                  placeholder="Short description"
+                  className="min-h-44"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -150,7 +175,16 @@ export default function DishForm() {
         <FormField
           control={form.control}
           name="image"
-          render={() => <ImageUploader preview={preview} onDrop={onDrop} />}
+          render={() => (
+            <ImageUploader
+              preview={preview}
+              onDrop={(acceptedFiles) => {
+                onDrop(acceptedFiles);
+                setImageChanged(true);
+              }}
+              existingImage={!imageChanged ? dish?.image : ''}
+            />
+          )}
         />
 
         <div>
@@ -248,7 +282,7 @@ export default function DishForm() {
           disabled={isPending}
           size="lg"
         >
-          Create Dish
+          {dish ? 'Update Dish' : 'Create Dish'}
         </Button>
       </form>
     </Form>
