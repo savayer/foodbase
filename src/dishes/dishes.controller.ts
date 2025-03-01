@@ -115,9 +115,16 @@ export class DishesController {
       }),
     )
     file: Express.Multer.File,
+    @UserDecorator() user,
   ) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid ID');
+    }
+
+    const dish = await this.dishesService.getDish(id);
+
+    if (dish.user_id.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You can only update your own dishes');
     }
 
     let ingredients: IngredientDto[] = [];
