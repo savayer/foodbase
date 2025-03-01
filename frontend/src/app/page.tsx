@@ -6,7 +6,7 @@ export default async function Home() {
 
   return (
     <main className="mb-auto">
-      <section className="container mt-10 grid tablet:grid-cols-2 desktop:grid-cols-4 gap-6">
+      <section className="container mt-10 grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-4 gap-6">
         {dishes.map((dish) => (
           <div key={dish._id}>
             <Link href={`/user/dishes/${dish._id}`}>

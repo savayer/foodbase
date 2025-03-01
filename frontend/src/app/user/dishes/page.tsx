@@ -16,7 +16,7 @@ export default async function DishesPage() {
           </Button>
         </div>
 
-        <div className="mt-6 grid tablet:grid-cols-2 desktop:grid-cols-4 gap-6">
+        <div className="mt-6 grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-4 gap-6">
           {userDishes.map((dish) => (
             <div key={dish._id}>
               <Link href={`/user/dishes/${dish._id}`}>

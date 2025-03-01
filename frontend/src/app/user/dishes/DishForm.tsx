@@ -182,47 +182,53 @@ export default function DishForm({ dish }: Props) {
           <Card>
             <CardContent className="pt-6">
               {fields.map((field, index) => (
-                <div key={field.id} className="flex gap-3 mb-4">
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormControl>
-                          <Input placeholder="Ingredient name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.amount`}
-                    render={({ field }) => (
-                      <FormItem className="w-24">
-                        <FormControl>
-                          <Input placeholder="Amount" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.unit`}
-                    render={({ field }) => (
-                      <FormItem className="w-20">
-                        <FormControl>
-                          <Input placeholder="Unit" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div
+                  key={field.id}
+                  className="flex gap-y-2 gap-x-1 tablet:gap-x-2"
+                >
+                  <div className="flex grow flex-col tablet:flex-row gap-2 mb-4">
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Ingredient name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.amount`}
+                      render={({ field }) => (
+                        <FormItem className="w-full tablet:w-24">
+                          <FormControl>
+                            <Input placeholder="Amount" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.unit`}
+                      render={({ field }) => (
+                        <FormItem className="w-full tablet:w-20">
+                          <FormControl>
+                            <Input placeholder="Unit" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   {index > 0 && (
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="secondary"
                       size="icon"
                       onClick={() => remove(index)}
                     >
