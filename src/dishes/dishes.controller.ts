@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   FileTypeValidator,
+  ForbiddenException,
   Get,
   MaxFileSizeValidator,
   NotFoundException,
@@ -104,9 +105,17 @@ export class DishesController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async deleteDish(@Param('id') id: string) {
+  async deleteDish(@Param('id') id: string, @UserDecorator() user) {
     if (!isValidObjectId(id)) {
       throw new BadRequestException('Invalid ID');
+    }
+    const dish = await this.dishesService.getDish(id);
+    if (!dish) {
+      throw new NotFoundException(`Dish with ID ${id} not found`);
+    }
+
+    if (dish.user_id.toString() !== user._id.toString()) {
+      throw new ForbiddenException('You can only delete your own dishes');
     }
 
     const deletedDish = await this.dishesService.deleteDish(id);

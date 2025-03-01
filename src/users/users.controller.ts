@@ -30,7 +30,7 @@ export class UsersController {
   async getMe(@Request() req) {
     if (req.user) {
       return {
-        id: req.user._id,
+        _id: req.user._id,
         name: req.user.name,
         email: req.user.email,
       };
@@ -49,7 +49,7 @@ export class UsersController {
 
       if (userById)
         return {
-          id: userById._id,
+          _id: userById._id,
           name: userById.name,
           email: userById.email,
         };
@@ -59,7 +59,7 @@ export class UsersController {
 
     if (userByEmail)
       return {
-        id: userByEmail._id,
+        _id: userByEmail._id,
         name: userByEmail.name,
         email: userByEmail.email,
       };

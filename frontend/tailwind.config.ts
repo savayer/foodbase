@@ -12,6 +12,10 @@ export default {
       center: true,
       padding: '1.5rem',
     },
+    screens: {
+      tablet: '768px',
+      desktop: '1280px',
+    },
     extend: {
       colors: {
         background: 'hsl(var(--background))',

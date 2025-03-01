@@ -41,7 +41,7 @@ export class AuthService {
         email: user.email,
       }),
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
       },

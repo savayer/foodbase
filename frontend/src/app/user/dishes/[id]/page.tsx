@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import DeleteDishButton from '@/app/user/dishes/[id]/DeleteDishButton';
+import { useAuth } from '@/lib/useAuth';
+import DishActions from '@/app/user/dishes/[id]/DishActions';
 
 interface PageProps {
   params: {
@@ -22,13 +24,7 @@ export default async function DishPage({ params }: PageProps) {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-black">{dish.name}</h1>
 
-        <div className="space-x-4">
-          <Button variant="outline">
-            <Link href={`/user/dishes/${dish._id}/edit`}>Edit</Link>
-          </Button>
-
-          <DeleteDishButton id={dish._id} />
-        </div>
+        <DishActions dish={dish} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-10">
