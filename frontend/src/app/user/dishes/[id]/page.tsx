@@ -1,9 +1,5 @@
 import { getDish } from '@/actions/dishes';
-import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import DeleteDishButton from '@/app/user/dishes/[id]/DeleteDishButton';
-import { useAuth } from '@/lib/useAuth';
 import DishActions from '@/app/user/dishes/[id]/DishActions';
 
 interface PageProps {
@@ -42,18 +38,20 @@ export default async function DishPage({ params }: PageProps) {
           <h2 className="text-2xl font-bold mb-4">Description</h2>
           <p className="text-gray-600">{dish.description}</p>
 
-          {/*{dish.ingredients && dish.ingredients.length > 0 && (
+          {dish.ingredients && dish.ingredients.length > 0 && (
             <>
               <h2 className="text-2xl font-bold mt-8 mb-4">Ingredients</h2>
               <ul className="list-disc list-inside">
                 {dish.ingredients.map((ingredient, index) => (
                   <li key={index}>
-                    {ingredient.name} - {ingredient.amount} {ingredient.unit}
+                    {ingredient.name}
+                    {ingredient.amount && ` - ${ingredient.amount}`}
+                    {ingredient.unit && ` ${ingredient.unit}`}
                   </li>
                 ))}
               </ul>
             </>
-          )}*/}
+          )}
 
           {/*<div className="mt-8">
             <p className="text-sm text-gray-500">

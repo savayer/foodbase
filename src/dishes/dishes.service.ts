@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Dish } from './dish.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CreateDishWithUser } from './dto/create-dish.dto';
+import { CreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { FilesService } from '../files/files.service';
 import { ConfigService } from '@nestjs/config';
@@ -28,7 +28,7 @@ export class DishesService {
     return this.dishModel.findById(id).exec();
   }
 
-  async createDish(dto: CreateDishWithUser, file: Express.Multer.File) {
+  async createDish(dto: CreateDishDto, file: Express.Multer.File) {
     const fileName = `${Date.now()}-${slugify(dto.name, { lower: true })}`;
     const res = await this.filesService.uploadFile(file, fileName);
 

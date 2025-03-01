@@ -30,6 +30,18 @@ export class Dish extends Document {
 
   @Prop()
   category?: string;
+
+  @Prop({
+    type: [
+      {
+        name: { type: String, required: true },
+        amount: { type: String },
+        unit: { type: String },
+      },
+    ],
+    default: [],
+  })
+  ingredients: Array<{ name: string; amount: string; unit: string }>;
 }
 
 export const DishSchema = SchemaFactory.createForClass(Dish);

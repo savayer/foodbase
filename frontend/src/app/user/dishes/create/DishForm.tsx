@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from '@/components/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,14 @@ import React, { useTransition } from 'react';
 import { createDishAction } from '@/actions/dishes';
 import { Switch } from '@/components/ui/switch';
 import ImageUploader from '@/components/general/ImageUploader';
+import { Card, CardContent } from '@/components/ui/card';
+import { PlusCircle, Trash2 } from 'lucide-react';
+
+const IngredientSchema = z.object({
+  name: z.string().min(1, 'Ingredient name is required'),
+  amount: z.string().optional(),
+  unit: z.string().optional(),
+});
 
 const FormSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
@@ -29,6 +37,7 @@ const FormSchema = z.object({
     .instanceof(File)
     .refine((file) => file.size !== 0, 'Please upload an image'),
   isPublic: z.boolean(),
+  ingredients: z.array(IngredientSchema).optional(),
 });
 
 export default function DishForm() {
@@ -42,7 +51,13 @@ export default function DishForm() {
       description: '',
       image: new File([''], 'filename'),
       isPublic: true,
+      ingredients: [{ name: '', amount: '', unit: '' }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'ingredients',
   });
 
   const onDrop = React.useCallback(
@@ -70,6 +85,13 @@ export default function DishForm() {
       formData.append('description', data.description);
       formData.append('image', data.image);
       formData.append('isPublic', String(data.isPublic));
+
+      if (data.ingredients && data.ingredients.length > 0) {
+        const filteredIngredients = data.ingredients.filter(
+          (ingredient) => ingredient.name.trim() !== '',
+        );
+        formData.append('ingredients', JSON.stringify(filteredIngredients));
+      }
 
       try {
         await createDishAction(formData);
@@ -130,6 +152,78 @@ export default function DishForm() {
           name="image"
           render={() => <ImageUploader preview={preview} onDrop={onDrop} />}
         />
+
+        <div>
+          <h3 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2">
+            Ingredients
+          </h3>
+
+          <Card>
+            <CardContent className="pt-6">
+              {fields.map((field, index) => (
+                <div key={field.id} className="flex gap-3 mb-4">
+                  <FormField
+                    control={form.control}
+                    name={`ingredients.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <Input placeholder="Ingredient name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`ingredients.${index}.amount`}
+                    render={({ field }) => (
+                      <FormItem className="w-24">
+                        <FormControl>
+                          <Input placeholder="Amount" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`ingredients.${index}.unit`}
+                    render={({ field }) => (
+                      <FormItem className="w-20">
+                        <FormControl>
+                          <Input placeholder="Unit" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => append({ name: '', amount: '', unit: '' })}
+              >
+                <PlusCircle className="h-4 w-4" />
+                Add Ingredient
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         <FormField
           control={form.control}

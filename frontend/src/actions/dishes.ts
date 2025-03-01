@@ -1,6 +1,7 @@
 'use server';
 
 import { createFetchWrapper } from '@/lib/createFetchWrapper';
+import { IngredientItem } from '../../../src/dishes/dish.model';
 
 // @todo create swagger and generate types, instead of creating them manually
 export interface Dish {
@@ -16,6 +17,7 @@ export interface Dish {
   category?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  ingredients: IngredientItem[];
 }
 
 export const getPublicDishes = async (): Promise<Dish[]> => {

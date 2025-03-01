@@ -3,13 +3,29 @@ import {
   IsString,
   IsBoolean,
   IsOptional,
-  IsArray,
   IsNotEmpty,
+  ValidateNested,
+  IsArray,
 } from 'class-validator';
-import { Types } from 'mongoose';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { IngredientDto } from './ingredient.dto';
 
 export class CreateDishDto {
+  name: string;
+  description?: string;
+  isPublic?: boolean;
+  isFavorite?: boolean;
+
+  @Type(() => IngredientDto)
+  @ValidateNested({ each: true })
+  @IsArray()
+  @IsOptional()
+  ingredients?: IngredientDto[];
+
+  user_id: string;
+}
+
+export class HttpCreateDishDto {
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -38,6 +54,7 @@ export class CreateDishDto {
   })
   isFavorite?: boolean = false;
 
+  /*
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
@@ -46,8 +63,9 @@ export class CreateDishDto {
   @IsString()
   @IsOptional()
   category?: string;
-}
+*/
 
-export interface CreateDishWithUser extends CreateDishDto {
-  user_id: Types.ObjectId;
+  @IsString()
+  @IsOptional()
+  ingredients?: string;
 }

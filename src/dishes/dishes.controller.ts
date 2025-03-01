@@ -19,12 +19,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
-import { CreateDishDto } from './dto/create-dish.dto';
+import { HttpCreateDishDto } from './dto/create-dish.dto';
 import { UpdateDishDto } from './dto/update-dish.dto';
 import { isValidObjectId } from 'mongoose';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { UserDecorator } from '../decorators/user.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { IngredientDto } from './dto/ingredient.dto';
 
 @Controller('dishes')
 export class DishesController {
@@ -66,7 +67,7 @@ export class DishesController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   createDish(
-    @Body() dto: CreateDishDto,
+    @Body() httpDto: HttpCreateDishDto,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -78,9 +79,20 @@ export class DishesController {
     file: Express.Multer.File,
     @UserDecorator() user,
   ) {
+    let ingredients: IngredientDto[] = [];
+    if (httpDto.ingredients) {
+      try {
+        ingredients = JSON.parse(httpDto.ingredients);
+      } catch (e) {
+        console.error(e);
+        throw new BadRequestException('Invalid ingredients format');
+      }
+    }
+
     return this.dishesService.createDish(
       {
-        ...dto,
+        ...httpDto,
+        ingredients,
         user_id: user._id,
       },
       file,
