@@ -51,6 +51,13 @@ export class DishesService {
   }
 
   async deleteDish(id: string) {
+    const dish = await this.dishModel.findById(id).exec();
+
+    if (dish.image) {
+      const fileName = dish.image.split('/').pop();
+      await this.filesService.deleteImage(fileName);
+    }
+
     return this.dishModel.findByIdAndDelete(id).exec();
   }
 }
