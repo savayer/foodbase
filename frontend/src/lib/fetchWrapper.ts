@@ -1,14 +1,3 @@
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    public message: string,
-    public data?: unknown,
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
-
 export class FetchWrapper {
   private readonly baseUrl: string;
   private readonly headers = new Headers();
@@ -95,11 +84,7 @@ export class FetchWrapper {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        data.message || 'Something went wrong',
-        data,
-      );
+      throw new Error(data.message || 'An unexpected error occurred');
     }
 
     return data as T;

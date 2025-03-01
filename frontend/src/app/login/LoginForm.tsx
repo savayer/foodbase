@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { toast } from '@/components/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -14,11 +13,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ApiError } from '@/lib/fetchWrapper';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useAuth } from '@/lib/useAuth';
 import { loginAction } from '@/actions/auth';
+import { handleError } from '@/lib/handleError';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -47,20 +46,7 @@ export default function LoginForm() {
           router.push('/');
         }
       } catch (error) {
-        console.error(error);
-        if (error instanceof ApiError) {
-          toast({
-            title: 'Error',
-            description: error.message,
-            className: 'bg-red-400 text-white',
-          });
-        } else {
-          toast({
-            title: 'Error',
-            description: 'An unexpected error occurred',
-            className: 'bg-red-400 text-white',
-          });
-        }
+        handleError(error);
       }
     });
   }

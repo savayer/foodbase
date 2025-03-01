@@ -16,8 +16,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApiError, fetchWrapper } from '@/lib/fetchWrapper';
 import { registerAction } from '@/actions/auth';
+import { handleError } from '@/lib/handleError';
 
 const FormSchema = z
   .object({
@@ -68,20 +68,7 @@ export default function RegisterForm() {
           router.push('/login');
         }
       } catch (error) {
-        console.error(error);
-        if (error instanceof ApiError) {
-          toast({
-            title: 'Error',
-            description: error.message,
-            className: 'bg-red-400 text-white',
-          });
-        } else {
-          toast({
-            title: 'Error',
-            description: 'An unexpected error occurred',
-            className: 'bg-red-400 text-white',
-          });
-        }
+        handleError(error);
       }
     });
   }

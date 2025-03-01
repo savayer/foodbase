@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ApiError } from '@/lib/fetchWrapper';
 import { useRouter } from 'next/navigation';
 import React, { useTransition } from 'react';
 import { createDishAction, Dish, updateDishAction } from '@/actions/dishes';
@@ -23,6 +22,7 @@ import ImageUploader from '@/components/general/ImageUploader';
 import { Card, CardContent } from '@/components/ui/card';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { handleError } from '@/lib/handleError';
 
 const IngredientSchema = z.object({
   name: z.string().min(1, 'Ingredient name is required'),
@@ -118,21 +118,8 @@ export default function DishForm({ dish }: Props) {
         }
 
         router.push('/user/dishes');
-      } catch (error) {
-        console.error(error);
-        if (error instanceof ApiError) {
-          toast({
-            title: 'Error',
-            description: error.message,
-            className: 'bg-red-400 text-white',
-          });
-        } else {
-          toast({
-            title: 'Error',
-            description: 'An unexpected error occurred',
-            className: 'bg-red-400 text-white',
-          });
-        }
+      } catch (error: unknown) {
+        handleError(error);
       }
     });
   }
