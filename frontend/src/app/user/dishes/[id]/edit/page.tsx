@@ -14,7 +14,7 @@ export default async function Page({ params }: PageProps) {
   const user = JSON.parse(cookieStore.get('user')?.value || '{}');
   const dish = await getDish(params.id);
 
-  /*  if (dish.user_id !== user._id) {
+  if (dish.user_id !== user._id) {
     return (
       <div className="flex m-auto mb-auto">
         <b className="text-3xl font-bold text-center">
@@ -22,7 +22,7 @@ export default async function Page({ params }: PageProps) {
         </b>
       </div>
     );
-  }*/
+  }
 
   return (
     <div className="container mb-auto mt-10">
