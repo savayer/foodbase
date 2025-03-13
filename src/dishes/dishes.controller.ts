@@ -72,7 +72,7 @@ export class DishesController {
       new ParseFilePipe({
         validators: [
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 2048 }),
         ],
       }),
     )
@@ -109,7 +109,7 @@ export class DishesController {
       new ParseFilePipe({
         validators: [
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 2048 }),
         ],
         fileIsRequired: false,
       }),

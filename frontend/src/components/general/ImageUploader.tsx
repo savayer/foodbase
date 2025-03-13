@@ -25,7 +25,7 @@ export default function ImageUploader({
     useDropzone({
       onDrop,
       maxFiles: 1,
-      maxSize: 1000000,
+      maxSize: 1024 * 2048,
       accept: { 'image/png': [], 'image/jpg': [], 'image/jpeg': [] },
     });
 
