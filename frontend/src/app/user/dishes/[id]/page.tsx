@@ -3,13 +3,12 @@ import { notFound } from 'next/navigation';
 import DishActions from '@/app/user/dishes/[id]/DishActions';
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default async function DishPage({ params }: PageProps) {
-  const dish = await getDish(params.id);
+  const { id } = await params;
+  const dish = await getDish(id);
 
   if (!dish) {
     notFound();

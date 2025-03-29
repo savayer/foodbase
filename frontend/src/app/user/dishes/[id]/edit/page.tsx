@@ -4,15 +4,14 @@ import { getDish } from '@/actions/dishes';
 import { cookies } from 'next/headers';
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default async function Page({ params }: PageProps) {
   const cookieStore = await cookies();
   const user = JSON.parse(cookieStore.get('user')?.value || '{}');
-  const dish = await getDish(params.id);
+  const { id } = await params;
+  const dish = await getDish(id);
 
   if (dish.user_id !== user._id) {
     return (

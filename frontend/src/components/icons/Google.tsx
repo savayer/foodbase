@@ -1,4 +1,6 @@
-export default function GoogleIcon(props: any) {
+import { SVGProps } from 'react';
+
+export default function GoogleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 533.5 544.3" {...props}>
       <path

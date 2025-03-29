@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
-import React, { useTransition } from 'react';
+import React, { useTransition, useEffect } from 'react';
 import { createDishAction, Dish, updateDishAction } from '@/actions/dishes';
 import { Switch } from '@/components/ui/switch';
 import ImageUploader from '@/components/general/ImageUploader';
@@ -35,8 +35,14 @@ const FormSchema = z.object({
   description: z.string().min(5, 'Description is too short'),
   image: z.union([
     z
-      .instanceof(File)
-      .refine((file) => file.size !== 0, 'Please upload an image'),
+      .instanceof(typeof File !== 'undefined' ? File : Object)
+      .refine(
+        (file) =>
+          typeof File !== 'undefined' && file instanceof File
+            ? file.size !== 0
+            : true,
+        'Please upload an image',
+      ),
     z.string().url('Invalid image URL'),
   ]),
   isPublic: z.boolean(),
@@ -54,18 +60,36 @@ export default function DishForm({ dish }: Props) {
     dish?.image || '',
   );
   const [imageChanged, setImageChanged] = React.useState(false);
+  const [isClient, setIsClient] = React.useState(false);
+
+  // Определяем, когда мы на клиенте
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: dish?.name || '',
       description: dish?.description || '',
-      image: dish?.image || new File([''], 'filename'),
+      image: dish?.image || '', // Не инициализируем File на этапе SSR
       isPublic: dish?.isPublic || true,
       ingredients: dish?.ingredients?.length
         ? dish?.ingredients
         : [{ name: '', amount: '', unit: '' }],
     },
   });
+
+  // Инициализируем File объект только на клиенте
+  useEffect(() => {
+    if (
+      isClient &&
+      !dish?.image &&
+      typeof form.getValues('image') !== 'object'
+    ) {
+      form.setValue('image', new File([], 'placeholder'));
+    }
+  }, [isClient, dish, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -95,7 +119,7 @@ export default function DishForm({ dish }: Props) {
       const formData = new FormData();
       formData.append('name', data.name);
       formData.append('description', data.description);
-      formData.append('image', data.image);
+      formData.append('image', data.image as string | Blob);
       formData.append('isPublic', String(data.isPublic));
 
       if (data.ingredients && data.ingredients.length > 0) {
@@ -122,6 +146,10 @@ export default function DishForm({ dish }: Props) {
         handleError(error);
       }
     });
+  }
+
+  if (!isClient) {
+    return <div>Loading form...</div>;
   }
 
   return (

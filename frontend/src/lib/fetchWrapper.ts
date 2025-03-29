@@ -25,7 +25,10 @@ export class FetchWrapper {
     return this.handleResponse(response);
   }
 
-  async post<T>(url: string, data: any): Promise<T> {
+  async post<T, D extends Record<string, unknown> | FormData>(
+    url: string,
+    data: D,
+  ): Promise<T> {
     const isFormData = data instanceof FormData;
     let headers;
 
@@ -36,14 +39,17 @@ export class FetchWrapper {
 
     const response = await fetch(`${this.baseUrl}${url}`, {
       method: 'POST',
-      body: isFormData ? data : JSON.stringify(data),
+      body: isFormData ? (data as FormData) : JSON.stringify(data),
       headers: isFormData ? headers : this.headers,
     });
 
     return this.handleResponse(response);
   }
 
-  async put<T>(url: string, data: any): Promise<T> {
+  async put<T, D extends Record<string, unknown>>(
+    url: string,
+    data: D,
+  ): Promise<T> {
     const response = await fetch(`${this.baseUrl}${url}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -53,7 +59,10 @@ export class FetchWrapper {
     return this.handleResponse(response);
   }
 
-  async patch<T>(url: string, data: any): Promise<T> {
+  async patch<T, D extends Record<string, unknown> | FormData>(
+    url: string,
+    data: D,
+  ): Promise<T> {
     const isFormData = data instanceof FormData;
     let headers;
 
@@ -64,7 +73,7 @@ export class FetchWrapper {
 
     const response = await fetch(`${this.baseUrl}${url}`, {
       method: 'PATCH',
-      body: isFormData ? data : JSON.stringify(data),
+      body: isFormData ? (data as FormData) : JSON.stringify(data),
       headers: isFormData ? headers : this.headers,
     });
 

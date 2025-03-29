@@ -9,6 +9,7 @@ interface LoginResponse {
 interface LoginPayload {
   email: string;
   password: string;
+  [key: string]: unknown;
 }
 
 export const loginAction = async (
@@ -26,6 +27,7 @@ interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  [key: string]: unknown;
 }
 
 export const registerAction = async (

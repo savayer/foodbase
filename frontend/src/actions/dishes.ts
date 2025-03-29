@@ -1,7 +1,12 @@
 'use server';
 
 import { createFetchWrapper } from '@/lib/createFetchWrapper';
-import { IngredientItem } from '../../../src/dishes/dish.model';
+
+export interface IngredientItem {
+  name: string;
+  amount?: string;
+  unit?: string;
+}
 
 // @todo create swagger and generate types, instead of creating them manually
 export interface Dish {
@@ -19,6 +24,8 @@ export interface Dish {
   updatedAt?: Date;
   ingredients: IngredientItem[];
 }
+
+export type DishFormData = FormData;
 
 export const getPublicDishes = async (): Promise<Dish[]> => {
   const fetchWrapper = await createFetchWrapper(false);
@@ -44,13 +51,16 @@ export const deleteDish = async (id: string): Promise<Dish[]> => {
   return await fetchWrapper.delete(`/dishes/${id}`);
 };
 
-export const createDishAction = async (data): Promise<Dish> => {
+export const createDishAction = async (data: DishFormData): Promise<Dish> => {
   const fetchWrapper = await createFetchWrapper(true);
 
   return await fetchWrapper.post('/dishes', data);
 };
 
-export const updateDishAction = async (id: string, data): Promise<Dish> => {
+export const updateDishAction = async (
+  id: string,
+  data: DishFormData,
+): Promise<Dish> => {
   const fetchWrapper = await createFetchWrapper(true);
 
   return await fetchWrapper.patch(`/dishes/${id}`, data);
