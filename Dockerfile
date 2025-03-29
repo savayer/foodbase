@@ -2,18 +2,17 @@ FROM node:20
 
 EXPOSE 3000
 
-# Use latest version of npm
 RUN npm install npm@latest -g
 
-# Install the nestJs CLI
 RUN npm install -g @nestjs/cli
+
+WORKDIR /app
 
 COPY package.json package-lock.json* ./
 
-RUN npm install --no-optional && npm cache clean --force
-
-# copy in our source code last, as it changes the most
-WORKDIR /app
+RUN npm install --include=optional && \
+    npm install --os=linux --cpu=arm64 sharp && \
+    npm cache clean --force
 
 COPY . .
 
