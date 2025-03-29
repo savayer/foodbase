@@ -1,20 +1,42 @@
-version: "3.8"
 services:
   api:
     container_name: foodbase_api
     build:
       context: .
     ports:
-      - "3000:3000"
+      - '3002:3000'
     volumes:
       - .:/app
       - /app/node_modules
     environment:
+      PORT: ${PORT:-3000}
+      JWT_SECRET: ${JWT_SECRET}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       DB_NAME: ${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - database
+    restart: unless-stopped
+
+  frontend:
+    container_name: foodbase_frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    ports:
+      - '3003:3000'
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
 
   database:
     image: mongo:latest
